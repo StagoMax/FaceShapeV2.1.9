@@ -1,0 +1,10 @@
+node_modules
+android
+android_backup
+ios
+eas-inspect
+.gradle
+.expo
+*.iml
+.idea
+*.log

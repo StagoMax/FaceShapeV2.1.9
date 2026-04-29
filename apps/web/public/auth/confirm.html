@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Email confirmation</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f2f2f7;
+        color: #1c1c1e;
+      }
+      .page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .card {
+        width: 100%;
+        max-width: 420px;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .status {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #8e8e93;
+      }
+      .message {
+        font-size: 16px;
+        color: #3a3a3c;
+        margin: 0;
+      }
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-align: center;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: #007aff;
+        color: #ffffff;
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-secondary {
+        background: #e5e5ea;
+        color: #1c1c1e;
+      }
+      .helper {
+        font-size: 13px;
+        color: #8e8e93;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <div class="status" id="status">Verifying</div>
+        <h1 class="title" id="title">Email confirmation</h1>
+        <p class="message" id="message">Checking your verification link...</p>
+        <div class="actions">
+          <button class="btn btn-primary" id="open-app" type="button" disabled>Open the app</button>
+          <a class="btn btn-secondary" id="back-home" href="/">Back to Miriai</a>
+        </div>
+        <div class="helper" id="helper">
+          If nothing happens, open the app and sign in again.
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const statusEl = document.getElementById('status');
+        const titleEl = document.getElementById('title');
+        const messageEl = document.getElementById('message');
+        const helperEl = document.getElementById('helper');
+        const openAppButton = document.getElementById('open-app');
+        const backHomeLink = document.getElementById('back-home');
+
+        const translations = {
+          zh: {
+            title: '邮箱确认',
+            backHome: '返回 Miriai',
+            verifying: '验证中',
+            verified: '已验证',
+            invalid: '链接无效',
+            checking: '正在检查你的验证链接...',
+            openApp: '打开 App',
+            mobileVerified: '邮箱已验证。点击下方按钮打开 App。',
+            desktopVerified: '邮箱已验证。你现在可以关闭这个页面。',
+            installHint: '如果还没有安装 App，请先安装后重新登录。',
+            closeHint: '你可以安全地关闭此页面。',
+            invalidHint: '缺少验证信息，请重新申请新的验证邮件。',
+            expiredHint: '如果链接已过期，请重新申请验证邮件。',
+          },
+          'zh-TW': {
+            title: '電子郵件確認',
+            backHome: '返回 Miriai',
+            verifying: '驗證中',
+            verified: '已驗證',
+            invalid: '連結無效',
+            checking: '正在檢查你的驗證連結...',
+            openApp: '開啟 App',
+            mobileVerified: '電子郵件已驗證。點擊下方按鈕開啟 App。',
+            desktopVerified: '電子郵件已驗證。你現在可以關閉此頁面。',
+            installHint: '如果尚未安裝 App，請先安裝後重新登入。',
+            closeHint: '你可以安全地關閉此頁面。',
+            invalidHint: '缺少驗證資訊，請重新申請新的驗證郵件。',
+            expiredHint: '如果連結已過期，請重新申請驗證郵件。',
+          },
+          en: {
+            title: 'Email confirmation',
+            backHome: 'Back to Miriai',
+            verifying: 'Verifying',
+            verified: 'Verified',
+            invalid: 'Invalid link',
+            checking: 'Checking your verification link...',
+            openApp: 'Open the app',
+            mobileVerified: 'Email verified. Tap below to open the app.',
+            desktopVerified: 'Email verified. You can close this tab.',
+            installHint: 'If the app is not installed, download it and sign in again.',
+            closeHint: 'You can safely close this page.',
+            invalidHint: 'Missing verification details. Please request a new email.',
+            expiredHint: 'If the link is expired, request another verification email.',
+          },
+          ja: {
+            title: 'メール確認',
+            backHome: 'Miriai に戻る',
+            verifying: '確認中',
+            verified: '確認完了',
+            invalid: '無効なリンク',
+            checking: '確認リンクをチェックしています...',
+            openApp: 'アプリを開く',
+            mobileVerified: 'メール確認が完了しました。下のボタンからアプリを開けます。',
+            desktopVerified: 'メール確認が完了しました。このタブは閉じて大丈夫です。',
+            installHint: 'アプリが未インストールの場合は、インストール後に再度ログインしてください。',
+            closeHint: 'このページは閉じても問題ありません。',
+            invalidHint: '確認情報が不足しています。新しい確認メールを再送してください。',
+            expiredHint: 'リンクの期限が切れている場合は、確認メールを再送してください。',
+          },
+        };
+
+        const getCookieLanguage = () => {
+          const parts = document.cookie.split(';');
+          for (const part of parts) {
+            const [key, ...rest] = part.trim().split('=');
+            if (key === 'miri_web_language') {
+              return rest.join('=') || null;
+            }
+          }
+          return null;
+        };
+
+        const normalizeLanguage = (value) => {
+          const normalized = (value || '').toLowerCase();
+          if (!normalized) {
+            return null;
+          }
+          if (normalized === 'zh' || normalized.startsWith('zh-cn') || normalized.startsWith('zh-sg')) {
+            return 'zh';
+          }
+          if (normalized === 'zh-tw' || normalized.startsWith('zh-hk') || normalized.startsWith('zh-mo')) {
+            return 'zh-TW';
+          }
+          if (normalized === 'ja' || normalized.startsWith('ja-')) {
+            return 'ja';
+          }
+          if (normalized === 'en' || normalized.startsWith('en-')) {
+            return 'en';
+          }
+          return null;
+        };
+
+        const language =
+          normalizeLanguage(window.localStorage.getItem('miri_web_language')) ||
+          normalizeLanguage(getCookieLanguage()) ||
+          normalizeLanguage(navigator.language) ||
+          'en';
+        const copy = translations[language] || translations.en;
+        document.documentElement.lang = language === 'zh' ? 'zh-CN' : language;
+        document.title = copy.title;
+        titleEl.textContent = copy.title;
+        statusEl.textContent = copy.verifying;
+        messageEl.textContent = copy.checking;
+        openAppButton.textContent = copy.openApp;
+        backHomeLink.textContent = copy.backHome;
+        helperEl.textContent = copy.installHint;
+
+        const rawParams = window.location.hash
+          ? window.location.hash.slice(1)
+          : window.location.search.replace(/^\?/, '');
+
+        const params = new URLSearchParams(rawParams);
+        const hasTokens =
+          (params.get('access_token') && params.get('refresh_token')) || params.get('code');
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+
+        const deepLinkBase = 'miri://auth/callback';
+        const deepLink = rawParams ? `${deepLinkBase}#${rawParams}` : deepLinkBase;
+
+        if (hasTokens) {
+          statusEl.textContent = copy.verified;
+          if (isMobile) {
+            messageEl.textContent = copy.mobileVerified;
+            openAppButton.disabled = false;
+            openAppButton.addEventListener('click', () => {
+              window.location.href = deepLink;
+            });
+            helperEl.textContent = copy.installHint;
+          } else {
+            messageEl.textContent = copy.desktopVerified;
+            openAppButton.style.display = 'none';
+            helperEl.textContent = copy.closeHint;
+          }
+        } else {
+          statusEl.textContent = copy.invalid;
+          messageEl.textContent = copy.invalidHint;
+          openAppButton.style.display = 'none';
+          helperEl.textContent = copy.expiredHint;
+        }
+      })();
+    </script>
+  </body>
+</html>

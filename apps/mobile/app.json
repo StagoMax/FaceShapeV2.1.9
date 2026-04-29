@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "Miri",
+    "slug": "miri",
+    "scheme": "miri",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "jsEngine": "hermes",
+            "useFrameworks": "static"
+          },
+          "android": {
+            "jsEngine": "hermes",
+            "ndkVersion": "26.1.10909125",
+            "cmakeVersion": "3.22.1",
+            "kotlinVersion": "2.1.20"
+          }
+        }
+      ],
+      "react-native-iap",
+      "expo-asset",
+      "./plugins/with-local-properties.js",
+      "expo-secure-store"
+    ],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.miriai.miri",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "app.miriai.miri",
+      "jsEngine": "hermes"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

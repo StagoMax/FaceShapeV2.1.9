@@ -1,0 +1,18 @@
+{
+  "name": "miriai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "node scripts/run-web.js dev",
+    "build:web": "node scripts/run-web.js build",
+    "start:web": "node scripts/run-web.js start",
+    "lint:web": "npm run --workspace=apps/web lint",
+    "dev:mobile": "npm run --workspace=apps/mobile start",
+    "android": "npm run --workspace=apps/mobile android",
+    "ios": "npm run --workspace=apps/mobile ios"
+  }
+}
